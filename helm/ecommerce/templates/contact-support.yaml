@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: contact-support
+  namespace: ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: contact-support
+  template:
+    metadata:
+      labels:
+        app: contact-support
+    spec:
+      containers:
+        - name: contact-support
+          image: ecommerceservice-contact-support:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: contact-support
+  namespace: ecommerce
+spec:
+  selector:
+    app: contact-support
+  ports:
+    - port: 8000
+      targetPort: 8000

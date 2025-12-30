@@ -5,7 +5,7 @@ import('node-fetch').then(({ default: fetch }) => {
 
   router.get('/contact-message', async (req, res) => {
     try {
-      const response = await fetch(`${CONTACT_API_HOST}:8000/api/contact-message`);
+      const response = await fetch(`${CONTACT_API_HOST}/api/contact-message`);
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error);

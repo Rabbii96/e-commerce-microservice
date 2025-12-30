@@ -1,0 +1,121 @@
+version: "3.9"
+
+services:
+
+  # ======================
+  # AUTH / PROFILE SERVICE
+  # ======================
+  authentication:
+    build: ./profile-management
+    container_name: authentication
+    ports:
+      - "3003:3003"
+    networks:
+      - ecommerce-net
+
+  # ======================
+  # PRODUCT CATALOG SERVICE
+  # ======================
+  product-catalog:
+    build: ./product-catalog
+    container_name: product-catalog
+    ports:
+      - "3001:3001"
+    networks:
+      - ecommerce-net
+
+  # ======================
+  # PRODUCT INVENTORY SERVICE
+  # ======================
+  product-inventory:
+    build: ./product-inventory
+    container_name: product-inventory
+    ports:
+      - "3002:3002"
+    networks:
+      - ecommerce-net
+
+  # ======================
+  # SHIPPING & HANDLING SERVICE
+  # ======================
+  shipping-and-handling:
+    build: ./shipping-and-handling
+    container_name: shipping-and-handling
+    ports:
+      - "8081:8080"
+    networks:
+      - ecommerce-net
+
+  # ======================
+  # ORDER MANAGEMENT SERVICE
+  # ======================
+  order-management:
+    build: ./order-management
+    container_name: order-management
+    ports:
+      - "9090:9090"
+    environment:
+      PRODUCT_CATALOG_API_HOST: http://product-catalog:3001
+      PRODUCT_INVENTORY_API_HOST: http://product-inventory:3002
+      SHIPPING_HANDLING_API_HOST: http://shipping-and-handling:8080
+    depends_on:
+      - product-catalog
+      - product-inventory
+      - shipping-and-handling
+    networks:
+      - ecommerce-net
+
+  # ======================
+  # CONTACT SUPPORT SERVICE
+  # ======================
+  contact-support:
+    build: ./contact-support-team
+    container_name: contact-support
+    ports:
+      - "8000:8000"
+    networks:
+      - ecommerce-net
+
+  # ======================
+  # ECOMMERCE UI (REACT + NODE SERVER)
+  # ======================
+  ecommerce-ui:
+    build: ./ecommerce-ui
+    container_name: ecommerce-ui
+    ports:
+      - "4000:4000"
+
+    environment:
+      # -------- Node.js server ENV --------
+      PROFILE_API_HOST: http://authentication:3003
+      PRODUCT_API_HOST: http://product-catalog:3001
+      INVENTORY_API_HOST: http://product-inventory:3002
+      ORDER_API_HOST: http://order-management:9090
+      SHIPPING_API_HOST: http://shipping-and-handling:8080
+      CONTACT_API_HOST: http://contact-support:8000
+
+      # -------- React client ENV --------
+      REACT_APP_PROFILE_API_HOST: http://authentication:3003
+      REACT_APP_PRODUCT_API_HOST: http://product-catalog:3001
+      REACT_APP_INVENTORY_API_HOST: http://product-inventory:3002
+      REACT_APP_ORDER_API_HOST: http://order-management:9090
+      REACT_APP_SHIPPING_API_HOST: http://shipping-and-handling:8080
+      REACT_APP_CONTACT_API_HOST: http://contact-support:8000
+
+    depends_on:
+      - authentication
+      - product-catalog
+      - product-inventory
+      - order-management
+      - shipping-and-handling
+      - contact-support
+    networks:
+      - ecommerce-net
+
+
+# ======================
+# NETWORK
+# ======================
+networks:
+  ecommerce-net:
+    driver: bridge

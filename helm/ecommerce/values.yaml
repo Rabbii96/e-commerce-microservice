@@ -1,0 +1,30 @@
+namespace: ecommerce
+
+services:
+  authentication:
+    image: ecommerceservice-authentication:latest
+    port: 3003
+
+  productCatalog:
+    image: ecommerceservice-product-catalog:latest
+    port: 3001
+
+  productInventory:
+    image: ecommerceservice-product-inventory:latest
+    port: 3002
+
+  orderManagement:
+    image: ecommerceservice-order-management:latest
+    port: 9090
+
+  shipping:
+    image: ecommerceservice-shipping-and-handling:latest
+    port: 8080
+
+  contact:
+    image: ecommerceservice-contact-support:latest
+    port: 8000
+
+  ui:
+    image: ecommerceservice-ecommerce-ui:latest
+    port: 4000
